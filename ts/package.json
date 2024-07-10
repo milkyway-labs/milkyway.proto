@@ -1,6 +1,6 @@
 {
   "name": "@milkywaylabs/milkyway.proto",
-  "version": "1.0.0",
+  "version": "1.0.0-rc2",
   "description": "JS and TS types relating to Protocol Buffers used by the MilkyWay chain",
   "contributors": [
     "Manuel Turetta"
