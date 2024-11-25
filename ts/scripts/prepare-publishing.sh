@@ -5,7 +5,7 @@ command -v shellcheck >/dev/null && shellcheck "$0"
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 PKG_DIR="$SCRIPT_DIR/.."
 
-DIRS=(amino cosmos cosmos_proto gogoproto google milkyway stride tendermint)
+DIRS=(amino cosmos cosmos_proto gogoproto google milkyway)
 FILES=()
 
 for dir in "${DIRS[@]}"; do

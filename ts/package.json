@@ -1,6 +1,6 @@
 {
   "name": "@milkywaylabs/milkyway.proto",
-  "version": "1.0.0-rc2",
+  "version": "1.6.0-993cd6c9ccbd",
   "description": "JS and TS types relating to Protocol Buffers used by the MilkyWay chain",
   "contributors": [
     "Manuel Turetta"
@@ -14,14 +14,12 @@
     "access": "public"
   },
   "files": [
-      "amino/",
-      "cosmos/",
-      "cosmos_proto",
-      "gogoproto/",
-      "google/",
-      "milkyway/",
-      "stride/",
-      "tendermint/"
+    "amino/",
+    "cosmos/",
+    "cosmos_proto",
+    "gogoproto/",
+    "google/",
+    "milkyway/"
   ],
   "scripts": {
     "protogen": "./scripts/protogen.sh",
@@ -29,9 +27,10 @@
     "prepare-publish": "./scripts/prepare-publishing.sh"
   },
   "dependencies": {
-    "protobufjs": "^7.3.2"
+    "@bufbuild/protobuf": "^2.2.2"
   },
   "devDependencies": {
+    "@bufbuild/buf": "^1.47.2",
     "@types/node": "^15.6.2",
     "prettier": "^3.0.3",
     "typescript": "~5.2"

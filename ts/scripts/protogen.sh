@@ -31,6 +31,5 @@ echo "Generating typescript code"
 pushd "$SCRIPT_DIR/../../proto" > /dev/null
 
 generate_proto "./milkyway"
-generate_proto "./stride"
 
 popd > /dev/null

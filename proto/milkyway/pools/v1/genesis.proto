@@ -1,0 +1,24 @@
+syntax = "proto3";
+package milkyway.pools.v1;
+
+import "gogoproto/gogo.proto";
+import "milkyway/pools/v1/models.proto";
+import "milkyway/pools/v1/params.proto";
+
+option go_package = "github.com/milkyway-labs/milkyway/x/pools/types";
+
+// GenesisState defines the pools module's genesis state.
+message GenesisState {
+  // Params defines the parameters of the module.
+  Params params = 1 [ (gogoproto.nullable) = false ];
+
+  // NextPoolID represents the id to be used when creating the next pool.
+  uint32 next_pool_id = 2 [
+    (gogoproto.customname) = "NextPoolID",
+    (gogoproto.moretags) = "yaml:\"next_pool_id\""
+  ];
+
+  // Pools defines the list of pools.
+  repeated Pool pools = 3
+      [ (gogoproto.moretags) = "yaml:\"pools\"", (gogoproto.nullable) = false ];
+}
