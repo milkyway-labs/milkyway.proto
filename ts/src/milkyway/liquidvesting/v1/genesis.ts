@@ -6,7 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { BurnCoins, UserInsuranceFundState } from "./models";
+import { BurnCoins, UserInsuranceFundEntry } from "./models";
 import { Params } from "./params";
 
 export const protobufPackage = "milkyway.liquidvesting.v1";
@@ -23,7 +23,7 @@ export interface GenesisState {
    */
   burnCoins: BurnCoins[];
   /** UserInsuranceFunds represents the users' insurance fund. */
-  userInsuranceFunds: UserInsuranceFundState[];
+  userInsuranceFunds: UserInsuranceFundEntry[];
 }
 
 function createBaseGenesisState(): GenesisState {
@@ -39,7 +39,7 @@ export const GenesisState: MessageFns<GenesisState> = {
       BurnCoins.encode(v!, writer.uint32(18).fork()).join();
     }
     for (const v of message.userInsuranceFunds) {
-      UserInsuranceFundState.encode(v!, writer.uint32(26).fork()).join();
+      UserInsuranceFundEntry.encode(v!, writer.uint32(26).fork()).join();
     }
     return writer;
   },
@@ -72,7 +72,7 @@ export const GenesisState: MessageFns<GenesisState> = {
             break;
           }
 
-          message.userInsuranceFunds.push(UserInsuranceFundState.decode(reader, reader.uint32()));
+          message.userInsuranceFunds.push(UserInsuranceFundEntry.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -89,7 +89,7 @@ export const GenesisState: MessageFns<GenesisState> = {
       params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
       burnCoins: gt.Array.isArray(object?.burnCoins) ? object.burnCoins.map((e: any) => BurnCoins.fromJSON(e)) : [],
       userInsuranceFunds: gt.Array.isArray(object?.userInsuranceFunds)
-        ? object.userInsuranceFunds.map((e: any) => UserInsuranceFundState.fromJSON(e))
+        ? object.userInsuranceFunds.map((e: any) => UserInsuranceFundEntry.fromJSON(e))
         : [],
     };
   },
@@ -103,7 +103,7 @@ export const GenesisState: MessageFns<GenesisState> = {
       obj.burnCoins = message.burnCoins.map((e) => BurnCoins.toJSON(e));
     }
     if (message.userInsuranceFunds?.length) {
-      obj.userInsuranceFunds = message.userInsuranceFunds.map((e) => UserInsuranceFundState.toJSON(e));
+      obj.userInsuranceFunds = message.userInsuranceFunds.map((e) => UserInsuranceFundEntry.toJSON(e));
     }
     return obj;
   },
@@ -117,7 +117,7 @@ export const GenesisState: MessageFns<GenesisState> = {
       ? Params.fromPartial(object.params)
       : undefined;
     message.burnCoins = object.burnCoins?.map((e) => BurnCoins.fromPartial(e)) || [];
-    message.userInsuranceFunds = object.userInsuranceFunds?.map((e) => UserInsuranceFundState.fromPartial(e)) || [];
+    message.userInsuranceFunds = object.userInsuranceFunds?.map((e) => UserInsuranceFundEntry.fromPartial(e)) || [];
     return message;
   },
 };

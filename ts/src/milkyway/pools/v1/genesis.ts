@@ -7,16 +7,11 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { Pool } from "./models";
-import { Params } from "./params";
 
 export const protobufPackage = "milkyway.pools.v1";
 
 /** GenesisState defines the pools module's genesis state. */
 export interface GenesisState {
-  /** Params defines the parameters of the module. */
-  params:
-    | Params
-    | undefined;
   /** NextPoolID represents the id to be used when creating the next pool. */
   nextPoolId: number;
   /** Pools defines the list of pools. */
@@ -24,19 +19,16 @@ export interface GenesisState {
 }
 
 function createBaseGenesisState(): GenesisState {
-  return { params: undefined, nextPoolId: 0, pools: [] };
+  return { nextPoolId: 0, pools: [] };
 }
 
 export const GenesisState: MessageFns<GenesisState> = {
   encode(message: GenesisState, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.params !== undefined) {
-      Params.encode(message.params, writer.uint32(10).fork()).join();
-    }
     if (message.nextPoolId !== 0) {
-      writer.uint32(16).uint32(message.nextPoolId);
+      writer.uint32(8).uint32(message.nextPoolId);
     }
     for (const v of message.pools) {
-      Pool.encode(v!, writer.uint32(26).fork()).join();
+      Pool.encode(v!, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -49,23 +41,15 @@ export const GenesisState: MessageFns<GenesisState> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.params = Params.decode(reader, reader.uint32());
-          continue;
-        }
-        case 2: {
-          if (tag !== 16) {
+          if (tag !== 8) {
             break;
           }
 
           message.nextPoolId = reader.uint32();
           continue;
         }
-        case 3: {
-          if (tag !== 26) {
+        case 2: {
+          if (tag !== 18) {
             break;
           }
 
@@ -83,7 +67,6 @@ export const GenesisState: MessageFns<GenesisState> = {
 
   fromJSON(object: any): GenesisState {
     return {
-      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
       nextPoolId: isSet(object.nextPoolId) ? gt.Number(object.nextPoolId) : 0,
       pools: gt.Array.isArray(object?.pools) ? object.pools.map((e: any) => Pool.fromJSON(e)) : [],
     };
@@ -91,9 +74,6 @@ export const GenesisState: MessageFns<GenesisState> = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
-    if (message.params !== undefined) {
-      obj.params = Params.toJSON(message.params);
-    }
     if (message.nextPoolId !== 0) {
       obj.nextPoolId = Math.round(message.nextPoolId);
     }
@@ -108,9 +88,6 @@ export const GenesisState: MessageFns<GenesisState> = {
   },
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = createBaseGenesisState();
-    message.params = (object.params !== undefined && object.params !== null)
-      ? Params.fromPartial(object.params)
-      : undefined;
     message.nextPoolId = object.nextPoolId ?? 0;
     message.pools = object.pools?.map((e) => Pool.fromPartial(e)) || [];
     return message;

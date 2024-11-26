@@ -47,7 +47,17 @@ export interface MsgCreateRewardsPlan {
    * UsersDistribution is the rewards distribution parameters for users who
    * delegated directly to the service.
    */
-  usersDistribution: UsersDistribution | undefined;
+  usersDistribution:
+    | UsersDistribution
+    | undefined;
+  /**
+   * FeeAmount represents the fees that are going to be paid to create the
+   * rewards plan. These should always be greater or equals of any of the coins
+   * specified inside the RewardsPlanCreationFee field of the modules params.
+   * If no fees are specified inside the module parameters, this field can be
+   * omitted.
+   */
+  feeAmount: Coin[];
 }
 
 /**
@@ -184,6 +194,7 @@ function createBaseMsgCreateRewardsPlan(): MsgCreateRewardsPlan {
     poolsDistribution: undefined,
     operatorsDistribution: undefined,
     usersDistribution: undefined,
+    feeAmount: [],
   };
 }
 
@@ -215,6 +226,9 @@ export const MsgCreateRewardsPlan: MessageFns<MsgCreateRewardsPlan> = {
     }
     if (message.usersDistribution !== undefined) {
       UsersDistribution.encode(message.usersDistribution, writer.uint32(74).fork()).join();
+    }
+    for (const v of message.feeAmount) {
+      Coin.encode(v!, writer.uint32(82).fork()).join();
     }
     return writer;
   },
@@ -298,6 +312,14 @@ export const MsgCreateRewardsPlan: MessageFns<MsgCreateRewardsPlan> = {
           message.usersDistribution = UsersDistribution.decode(reader, reader.uint32());
           continue;
         }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.feeAmount.push(Coin.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -322,6 +344,7 @@ export const MsgCreateRewardsPlan: MessageFns<MsgCreateRewardsPlan> = {
       usersDistribution: isSet(object.usersDistribution)
         ? UsersDistribution.fromJSON(object.usersDistribution)
         : undefined,
+      feeAmount: gt.Array.isArray(object?.feeAmount) ? object.feeAmount.map((e: any) => Coin.fromJSON(e)) : [],
     };
   },
 
@@ -354,6 +377,9 @@ export const MsgCreateRewardsPlan: MessageFns<MsgCreateRewardsPlan> = {
     if (message.usersDistribution !== undefined) {
       obj.usersDistribution = UsersDistribution.toJSON(message.usersDistribution);
     }
+    if (message.feeAmount?.length) {
+      obj.feeAmount = message.feeAmount.map((e) => Coin.toJSON(e));
+    }
     return obj;
   },
 
@@ -378,6 +404,7 @@ export const MsgCreateRewardsPlan: MessageFns<MsgCreateRewardsPlan> = {
     message.usersDistribution = (object.usersDistribution !== undefined && object.usersDistribution !== null)
       ? UsersDistribution.fromPartial(object.usersDistribution)
       : undefined;
+    message.feeAmount = object.feeAmount?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };

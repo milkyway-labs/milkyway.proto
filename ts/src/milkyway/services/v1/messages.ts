@@ -6,6 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import { ServiceParams } from "./models";
 import { Params } from "./params";
 
@@ -28,6 +29,14 @@ export interface MsgCreateService {
   website: string;
   /** PictureURL is the URL of the service picture */
   pictureUrl: string;
+  /**
+   * FeeAmount represents the fees that are going to be paid to create the
+   * service. These should always be greater or equals of any of the coins
+   * specified inside the ServiceRegistrationFee field of the modules params.
+   * If no fees are specified inside the module parameters, this field can be
+   * omitted.
+   */
+  feeAmount: Coin[];
 }
 
 /**
@@ -224,7 +233,7 @@ export interface MsgRevokeServiceAccreditationResponse {
 }
 
 function createBaseMsgCreateService(): MsgCreateService {
-  return { sender: "", name: "", description: "", website: "", pictureUrl: "" };
+  return { sender: "", name: "", description: "", website: "", pictureUrl: "", feeAmount: [] };
 }
 
 export const MsgCreateService: MessageFns<MsgCreateService> = {
@@ -243,6 +252,9 @@ export const MsgCreateService: MessageFns<MsgCreateService> = {
     }
     if (message.pictureUrl !== "") {
       writer.uint32(42).string(message.pictureUrl);
+    }
+    for (const v of message.feeAmount) {
+      Coin.encode(v!, writer.uint32(50).fork()).join();
     }
     return writer;
   },
@@ -294,6 +306,14 @@ export const MsgCreateService: MessageFns<MsgCreateService> = {
           message.pictureUrl = reader.string();
           continue;
         }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.feeAmount.push(Coin.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -310,6 +330,7 @@ export const MsgCreateService: MessageFns<MsgCreateService> = {
       description: isSet(object.description) ? gt.String(object.description) : "",
       website: isSet(object.website) ? gt.String(object.website) : "",
       pictureUrl: isSet(object.pictureUrl) ? gt.String(object.pictureUrl) : "",
+      feeAmount: gt.Array.isArray(object?.feeAmount) ? object.feeAmount.map((e: any) => Coin.fromJSON(e)) : [],
     };
   },
 
@@ -330,6 +351,9 @@ export const MsgCreateService: MessageFns<MsgCreateService> = {
     if (message.pictureUrl !== "") {
       obj.pictureUrl = message.pictureUrl;
     }
+    if (message.feeAmount?.length) {
+      obj.feeAmount = message.feeAmount.map((e) => Coin.toJSON(e));
+    }
     return obj;
   },
 
@@ -343,6 +367,7 @@ export const MsgCreateService: MessageFns<MsgCreateService> = {
     message.description = object.description ?? "";
     message.website = object.website ?? "";
     message.pictureUrl = object.pictureUrl ?? "";
+    message.feeAmount = object.feeAmount?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };

@@ -15,7 +15,7 @@ export const protobufPackage = "milkyway.restaking.v1";
 
 /**
  * MsgJoinService defines the message structure for the
- * JoinService gRPC service method. It allows the opeator admin to
+ * JoinService gRPC service method. It allows the operator admin to
  * start securing a AVS.
  */
 export interface MsgJoinService {
@@ -30,7 +30,7 @@ export interface MsgJoinServiceResponse {
 
 /**
  * MsgLeaveService defines the message structure for the
- * LeaveService gRPC service method. It allows the opeator admin to
+ * LeaveService gRPC service method. It allows the operator admin to
  * stop securing a AVS.
  */
 export interface MsgLeaveService {
@@ -39,7 +39,7 @@ export interface MsgLeaveService {
   serviceId: number;
 }
 
-/** MsgLeaveerviceResponse is the return value of MsgLeveService. */
+/** MsgLeaveServiceResponse is the return value of MsgLeaveService. */
 export interface MsgLeaveServiceResponse {
 }
 

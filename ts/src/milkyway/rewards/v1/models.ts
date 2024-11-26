@@ -146,7 +146,7 @@ export interface UsersDistributionTypeBasic {
  *  + one per validator for the zeroeth period, set on initialization
  */
 export interface HistoricalRewards {
-  cumulativeRewardRatios: DecPool[];
+  cumulativeRewardRatios: ServicePool[];
   referenceCount: number;
 }
 
@@ -156,7 +156,7 @@ export interface HistoricalRewards {
  * each block as long as the delegation target's tokens remain constant.
  */
 export interface CurrentRewards {
-  rewards: DecPool[];
+  rewards: ServicePool[];
   period: number;
 }
 
@@ -203,6 +203,16 @@ export interface DelegationDelegatorReward {
 }
 
 /**
+ * PoolServiceTotalDelegatorShares represents the total delegator shares for a
+ * pool-service pair.
+ */
+export interface PoolServiceTotalDelegatorShares {
+  poolId: number;
+  serviceId: number;
+  shares: DecCoin[];
+}
+
+/**
  * Pool is a Coins wrapper with denom which represents the rewards pool for the
  * given denom. It is used to represent the rewards associated with the denom.
  */
@@ -219,6 +229,12 @@ export interface Pool {
 export interface DecPool {
   denom: string;
   decCoins: DecCoin[];
+}
+
+/** ServicePool represents the rewards pool for a service. */
+export interface ServicePool {
+  serviceId: number;
+  decPools: DecPool[];
 }
 
 function createBaseRewardsPlan(): RewardsPlan {
@@ -887,7 +903,7 @@ function createBaseHistoricalRewards(): HistoricalRewards {
 export const HistoricalRewards: MessageFns<HistoricalRewards> = {
   encode(message: HistoricalRewards, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.cumulativeRewardRatios) {
-      DecPool.encode(v!, writer.uint32(10).fork()).join();
+      ServicePool.encode(v!, writer.uint32(10).fork()).join();
     }
     if (message.referenceCount !== 0) {
       writer.uint32(16).uint32(message.referenceCount);
@@ -907,7 +923,7 @@ export const HistoricalRewards: MessageFns<HistoricalRewards> = {
             break;
           }
 
-          message.cumulativeRewardRatios.push(DecPool.decode(reader, reader.uint32()));
+          message.cumulativeRewardRatios.push(ServicePool.decode(reader, reader.uint32()));
           continue;
         }
         case 2: {
@@ -930,7 +946,7 @@ export const HistoricalRewards: MessageFns<HistoricalRewards> = {
   fromJSON(object: any): HistoricalRewards {
     return {
       cumulativeRewardRatios: gt.Array.isArray(object?.cumulativeRewardRatios)
-        ? object.cumulativeRewardRatios.map((e: any) => DecPool.fromJSON(e))
+        ? object.cumulativeRewardRatios.map((e: any) => ServicePool.fromJSON(e))
         : [],
       referenceCount: isSet(object.referenceCount) ? gt.Number(object.referenceCount) : 0,
     };
@@ -939,7 +955,7 @@ export const HistoricalRewards: MessageFns<HistoricalRewards> = {
   toJSON(message: HistoricalRewards): unknown {
     const obj: any = {};
     if (message.cumulativeRewardRatios?.length) {
-      obj.cumulativeRewardRatios = message.cumulativeRewardRatios.map((e) => DecPool.toJSON(e));
+      obj.cumulativeRewardRatios = message.cumulativeRewardRatios.map((e) => ServicePool.toJSON(e));
     }
     if (message.referenceCount !== 0) {
       obj.referenceCount = Math.round(message.referenceCount);
@@ -952,7 +968,7 @@ export const HistoricalRewards: MessageFns<HistoricalRewards> = {
   },
   fromPartial(object: DeepPartial<HistoricalRewards>): HistoricalRewards {
     const message = createBaseHistoricalRewards();
-    message.cumulativeRewardRatios = object.cumulativeRewardRatios?.map((e) => DecPool.fromPartial(e)) || [];
+    message.cumulativeRewardRatios = object.cumulativeRewardRatios?.map((e) => ServicePool.fromPartial(e)) || [];
     message.referenceCount = object.referenceCount ?? 0;
     return message;
   },
@@ -965,7 +981,7 @@ function createBaseCurrentRewards(): CurrentRewards {
 export const CurrentRewards: MessageFns<CurrentRewards> = {
   encode(message: CurrentRewards, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.rewards) {
-      DecPool.encode(v!, writer.uint32(10).fork()).join();
+      ServicePool.encode(v!, writer.uint32(10).fork()).join();
     }
     if (message.period !== 0) {
       writer.uint32(16).uint64(message.period);
@@ -985,7 +1001,7 @@ export const CurrentRewards: MessageFns<CurrentRewards> = {
             break;
           }
 
-          message.rewards.push(DecPool.decode(reader, reader.uint32()));
+          message.rewards.push(ServicePool.decode(reader, reader.uint32()));
           continue;
         }
         case 2: {
@@ -1007,7 +1023,7 @@ export const CurrentRewards: MessageFns<CurrentRewards> = {
 
   fromJSON(object: any): CurrentRewards {
     return {
-      rewards: gt.Array.isArray(object?.rewards) ? object.rewards.map((e: any) => DecPool.fromJSON(e)) : [],
+      rewards: gt.Array.isArray(object?.rewards) ? object.rewards.map((e: any) => ServicePool.fromJSON(e)) : [],
       period: isSet(object.period) ? gt.Number(object.period) : 0,
     };
   },
@@ -1015,7 +1031,7 @@ export const CurrentRewards: MessageFns<CurrentRewards> = {
   toJSON(message: CurrentRewards): unknown {
     const obj: any = {};
     if (message.rewards?.length) {
-      obj.rewards = message.rewards.map((e) => DecPool.toJSON(e));
+      obj.rewards = message.rewards.map((e) => ServicePool.toJSON(e));
     }
     if (message.period !== 0) {
       obj.period = Math.round(message.period);
@@ -1028,7 +1044,7 @@ export const CurrentRewards: MessageFns<CurrentRewards> = {
   },
   fromPartial(object: DeepPartial<CurrentRewards>): CurrentRewards {
     const message = createBaseCurrentRewards();
-    message.rewards = object.rewards?.map((e) => DecPool.fromPartial(e)) || [];
+    message.rewards = object.rewards?.map((e) => ServicePool.fromPartial(e)) || [];
     message.period = object.period ?? 0;
     return message;
   },
@@ -1336,6 +1352,98 @@ export const DelegationDelegatorReward: MessageFns<DelegationDelegatorReward> = 
   },
 };
 
+function createBasePoolServiceTotalDelegatorShares(): PoolServiceTotalDelegatorShares {
+  return { poolId: 0, serviceId: 0, shares: [] };
+}
+
+export const PoolServiceTotalDelegatorShares: MessageFns<PoolServiceTotalDelegatorShares> = {
+  encode(message: PoolServiceTotalDelegatorShares, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.poolId !== 0) {
+      writer.uint32(8).uint32(message.poolId);
+    }
+    if (message.serviceId !== 0) {
+      writer.uint32(16).uint32(message.serviceId);
+    }
+    for (const v of message.shares) {
+      DecCoin.encode(v!, writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): PoolServiceTotalDelegatorShares {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePoolServiceTotalDelegatorShares();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.poolId = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.serviceId = reader.uint32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.shares.push(DecCoin.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PoolServiceTotalDelegatorShares {
+    return {
+      poolId: isSet(object.poolId) ? gt.Number(object.poolId) : 0,
+      serviceId: isSet(object.serviceId) ? gt.Number(object.serviceId) : 0,
+      shares: gt.Array.isArray(object?.shares) ? object.shares.map((e: any) => DecCoin.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: PoolServiceTotalDelegatorShares): unknown {
+    const obj: any = {};
+    if (message.poolId !== 0) {
+      obj.poolId = Math.round(message.poolId);
+    }
+    if (message.serviceId !== 0) {
+      obj.serviceId = Math.round(message.serviceId);
+    }
+    if (message.shares?.length) {
+      obj.shares = message.shares.map((e) => DecCoin.toJSON(e));
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<PoolServiceTotalDelegatorShares>): PoolServiceTotalDelegatorShares {
+    return PoolServiceTotalDelegatorShares.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<PoolServiceTotalDelegatorShares>): PoolServiceTotalDelegatorShares {
+    const message = createBasePoolServiceTotalDelegatorShares();
+    message.poolId = object.poolId ?? 0;
+    message.serviceId = object.serviceId ?? 0;
+    message.shares = object.shares?.map((e) => DecCoin.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBasePool(): Pool {
   return { denom: "", coins: [] };
 }
@@ -1484,6 +1592,82 @@ export const DecPool: MessageFns<DecPool> = {
     const message = createBaseDecPool();
     message.denom = object.denom ?? "";
     message.decCoins = object.decCoins?.map((e) => DecCoin.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseServicePool(): ServicePool {
+  return { serviceId: 0, decPools: [] };
+}
+
+export const ServicePool: MessageFns<ServicePool> = {
+  encode(message: ServicePool, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.serviceId !== 0) {
+      writer.uint32(8).uint32(message.serviceId);
+    }
+    for (const v of message.decPools) {
+      DecPool.encode(v!, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ServicePool {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseServicePool();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.serviceId = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.decPools.push(DecPool.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ServicePool {
+    return {
+      serviceId: isSet(object.serviceId) ? gt.Number(object.serviceId) : 0,
+      decPools: gt.Array.isArray(object?.decPools) ? object.decPools.map((e: any) => DecPool.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: ServicePool): unknown {
+    const obj: any = {};
+    if (message.serviceId !== 0) {
+      obj.serviceId = Math.round(message.serviceId);
+    }
+    if (message.decPools?.length) {
+      obj.decPools = message.decPools.map((e) => DecPool.toJSON(e));
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<ServicePool>): ServicePool {
+    return ServicePool.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<ServicePool>): ServicePool {
+    const message = createBaseServicePool();
+    message.serviceId = object.serviceId ?? 0;
+    message.decPools = object.decPools?.map((e) => DecPool.fromPartial(e)) || [];
     return message;
   },
 };

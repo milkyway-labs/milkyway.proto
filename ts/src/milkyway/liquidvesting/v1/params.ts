@@ -13,25 +13,35 @@ export const protobufPackage = "milkyway.liquidvesting.v1";
 export interface Params {
   /**
    * This value represents the percentage that needs to be sent to the
-   * insurance fund in order to restake a certain amount of vested tokens.
+   * insurance fund in order to restake a certain amount of locked tokens.
    * For example, if this value is 2%, a user must send 2 tokens to
-   * the insurance fund to restake 100 vested tokens
+   * the insurance fund to restake 100 locked tokens
    */
   insurancePercentage: string;
   /**
    * This value represents the list of users who are authorized to execute the
-   * MsgBurnVestedRepresentation.
+   * MsgBurnLockedRepresentation.
    */
   burners: string[];
   /**
    * This value represents the list of users who are authorized to execute the
-   * MsgMintVestedRepresentation.
+   * MsgMintLockedRepresentation.
    */
   minters: string[];
+  /**
+   * TrustedDelegates represents the list of users who are allowed to deposit
+   * on the insurance fund.
+   */
+  trustedDelegates: string[];
+  /**
+   * List of channels from which is allowed to receive deposits to the insurance
+   * fund.
+   */
+  allowedChannels: string[];
 }
 
 function createBaseParams(): Params {
-  return { insurancePercentage: "", burners: [], minters: [] };
+  return { insurancePercentage: "", burners: [], minters: [], trustedDelegates: [], allowedChannels: [] };
 }
 
 export const Params: MessageFns<Params> = {
@@ -44,6 +54,12 @@ export const Params: MessageFns<Params> = {
     }
     for (const v of message.minters) {
       writer.uint32(26).string(v!);
+    }
+    for (const v of message.trustedDelegates) {
+      writer.uint32(34).string(v!);
+    }
+    for (const v of message.allowedChannels) {
+      writer.uint32(42).string(v!);
     }
     return writer;
   },
@@ -79,6 +95,22 @@ export const Params: MessageFns<Params> = {
           message.minters.push(reader.string());
           continue;
         }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.trustedDelegates.push(reader.string());
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.allowedChannels.push(reader.string());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -93,6 +125,12 @@ export const Params: MessageFns<Params> = {
       insurancePercentage: isSet(object.insurancePercentage) ? gt.String(object.insurancePercentage) : "",
       burners: gt.Array.isArray(object?.burners) ? object.burners.map((e: any) => gt.String(e)) : [],
       minters: gt.Array.isArray(object?.minters) ? object.minters.map((e: any) => gt.String(e)) : [],
+      trustedDelegates: gt.Array.isArray(object?.trustedDelegates)
+        ? object.trustedDelegates.map((e: any) => gt.String(e))
+        : [],
+      allowedChannels: gt.Array.isArray(object?.allowedChannels)
+        ? object.allowedChannels.map((e: any) => gt.String(e))
+        : [],
     };
   },
 
@@ -107,6 +145,12 @@ export const Params: MessageFns<Params> = {
     if (message.minters?.length) {
       obj.minters = message.minters;
     }
+    if (message.trustedDelegates?.length) {
+      obj.trustedDelegates = message.trustedDelegates;
+    }
+    if (message.allowedChannels?.length) {
+      obj.allowedChannels = message.allowedChannels;
+    }
     return obj;
   },
 
@@ -118,6 +162,8 @@ export const Params: MessageFns<Params> = {
     message.insurancePercentage = object.insurancePercentage ?? "";
     message.burners = object.burners?.map((e) => e) || [];
     message.minters = object.minters?.map((e) => e) || [];
+    message.trustedDelegates = object.trustedDelegates?.map((e) => e) || [];
+    message.allowedChannels = object.allowedChannels?.map((e) => e) || [];
     return message;
   },
 };

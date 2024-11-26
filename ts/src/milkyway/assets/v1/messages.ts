@@ -285,7 +285,7 @@ export const MsgDeregisterAssetResponse: MessageFns<MsgDeregisterAssetResponse> 
   },
 };
 
-/** Msg defines the services module's gRPC message service. */
+/** Msg defines the assets module's gRPC message service. */
 export interface Msg {
   /** RegisterAsset defines the operation for registering an asset. */
   RegisterAsset(request: MsgRegisterAsset): Promise<MsgRegisterAssetResponse>;

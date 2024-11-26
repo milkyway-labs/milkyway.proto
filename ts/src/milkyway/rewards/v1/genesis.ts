@@ -13,6 +13,7 @@ import {
   DecPool,
   DelegatorStartingInfo,
   HistoricalRewards,
+  PoolServiceTotalDelegatorShares,
   RewardsPlan,
 } from "./models";
 import { Params } from "./params";
@@ -148,6 +149,11 @@ export interface GenesisState {
    * operators at genesis.
    */
   operatorAccumulatedCommissions: OperatorAccumulatedCommissionRecord[];
+  /**
+   * pool_service_total_delegator_shares defines the total delegator shares at
+   * genesis.
+   */
+  poolServiceTotalDelegatorShares: PoolServiceTotalDelegatorShares[];
 }
 
 function createBaseDelegatorWithdrawInfo(): DelegatorWithdrawInfo {
@@ -776,6 +782,7 @@ function createBaseGenesisState(): GenesisState {
     operatorsRecords: undefined,
     servicesRecords: undefined,
     operatorAccumulatedCommissions: [],
+    poolServiceTotalDelegatorShares: [],
   };
 }
 
@@ -807,6 +814,9 @@ export const GenesisState: MessageFns<GenesisState> = {
     }
     for (const v of message.operatorAccumulatedCommissions) {
       OperatorAccumulatedCommissionRecord.encode(v!, writer.uint32(74).fork()).join();
+    }
+    for (const v of message.poolServiceTotalDelegatorShares) {
+      PoolServiceTotalDelegatorShares.encode(v!, writer.uint32(82).fork()).join();
     }
     return writer;
   },
@@ -892,6 +902,14 @@ export const GenesisState: MessageFns<GenesisState> = {
           );
           continue;
         }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.poolServiceTotalDelegatorShares.push(PoolServiceTotalDelegatorShares.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -923,6 +941,9 @@ export const GenesisState: MessageFns<GenesisState> = {
         : undefined,
       operatorAccumulatedCommissions: gt.Array.isArray(object?.operatorAccumulatedCommissions)
         ? object.operatorAccumulatedCommissions.map((e: any) => OperatorAccumulatedCommissionRecord.fromJSON(e))
+        : [],
+      poolServiceTotalDelegatorShares: gt.Array.isArray(object?.poolServiceTotalDelegatorShares)
+        ? object.poolServiceTotalDelegatorShares.map((e: any) => PoolServiceTotalDelegatorShares.fromJSON(e))
         : [],
     };
   },
@@ -958,6 +979,11 @@ export const GenesisState: MessageFns<GenesisState> = {
         OperatorAccumulatedCommissionRecord.toJSON(e)
       );
     }
+    if (message.poolServiceTotalDelegatorShares?.length) {
+      obj.poolServiceTotalDelegatorShares = message.poolServiceTotalDelegatorShares.map((e) =>
+        PoolServiceTotalDelegatorShares.toJSON(e)
+      );
+    }
     return obj;
   },
 
@@ -985,6 +1011,8 @@ export const GenesisState: MessageFns<GenesisState> = {
       : undefined;
     message.operatorAccumulatedCommissions =
       object.operatorAccumulatedCommissions?.map((e) => OperatorAccumulatedCommissionRecord.fromPartial(e)) || [];
+    message.poolServiceTotalDelegatorShares =
+      object.poolServiceTotalDelegatorShares?.map((e) => PoolServiceTotalDelegatorShares.fromPartial(e)) || [];
     return message;
   },
 };

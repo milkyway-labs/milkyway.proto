@@ -10,7 +10,7 @@ import "gogoproto/gogo.proto";
 import "milkyway/operators/v1/params.proto";
 import "milkyway/operators/v1/models.proto";
 
-option go_package = "github.com/milkyway-labs/milkyway/x/operators/types";
+option go_package = "github.com/milkyway-labs/milkyway/v2/x/operators/types";
 
 // Msg defines the avs module's gRPC message service.
 service Msg {
@@ -75,6 +75,16 @@ message MsgRegisterOperator {
   string picture_url = 4 [
     (gogoproto.moretags) = "yaml:\"picture_url\"",
     (gogoproto.customname) = "PictureURL"
+  ];
+
+  // FeeAmount represents the fees that are going to be paid to create the
+  // operator. These should always be greater or equals of any of the coins
+  // specified inside the OperatorRegistrationFee field of the modules params.
+  // If no fees are specified inside the module parameters, this field can be
+  // omitted.
+  repeated cosmos.base.v1beta1.Coin fee_amount = 5 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable) = false
   ];
 }
 

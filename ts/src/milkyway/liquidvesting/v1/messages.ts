@@ -12,13 +12,13 @@ import { Params } from "./params";
 export const protobufPackage = "milkyway.liquidvesting.v1";
 
 /**
- * MsgMintVestedRepresentation defines the message structure for the
- * MintVestedRepresentation gRPC service method. It allows an authorized
- * account to mint a user's staked vested tokens representation that can be
+ * MsgMintLockedRepresentation defines the message structure for the
+ * MintLockedRepresentation gRPC service method. It allows an authorized
+ * account to mint a user's staked locked tokens representation that can be
  * used in the liquid vesting module.
  */
-export interface MsgMintVestedRepresentation {
-  /** User that want to triger the tokens mint. */
+export interface MsgMintLockedRepresentation {
+  /** User that want to trigger the tokens mint. */
   sender: string;
   /** User that will receive the minted tokens. */
   receiver: string;
@@ -27,19 +27,19 @@ export interface MsgMintVestedRepresentation {
 }
 
 /**
- * MsgMintVestedRepresentationResponse is the return value of
- * MsgMintVestedRepresentation.
+ * MsgMintLockedRepresentationResponse is the return value of
+ * MsgMintLockedRepresentation.
  */
-export interface MsgMintVestedRepresentationResponse {
+export interface MsgMintLockedRepresentationResponse {
 }
 
 /**
- * MsgBurnVestedRepresentation defines the message structure for the
- * BurnVestedRepresentation gRPC service method. It allows an authorized
- * account to burn a user's staked vested tokens representation.
+ * MsgBurnLockedRepresentation defines the message structure for the
+ * BurnLockedRepresentation gRPC service method. It allows an authorized
+ * account to burn a user's staked locked tokens representation.
  */
-export interface MsgBurnVestedRepresentation {
-  /** User that want to triger the tokens burn. */
+export interface MsgBurnLockedRepresentation {
+  /** User that want to trigger the tokens burn. */
   sender: string;
   /** User from which we want to burn the tokens. */
   user: string;
@@ -48,10 +48,10 @@ export interface MsgBurnVestedRepresentation {
 }
 
 /**
- * MsgBurnVestedRepresentationResponse is the return value of
- * MsgBurnVestedRepresentation.
+ * MsgBurnLockedRepresentationResponse is the return value of
+ * MsgBurnLockedRepresentation.
  */
-export interface MsgBurnVestedRepresentationResponse {
+export interface MsgBurnLockedRepresentationResponse {
 }
 
 /**
@@ -90,12 +90,12 @@ export interface MsgUpdateParams {
 export interface MsgUpdateParamsResponse {
 }
 
-function createBaseMsgMintVestedRepresentation(): MsgMintVestedRepresentation {
+function createBaseMsgMintLockedRepresentation(): MsgMintLockedRepresentation {
   return { sender: "", receiver: "", amount: [] };
 }
 
-export const MsgMintVestedRepresentation: MessageFns<MsgMintVestedRepresentation> = {
-  encode(message: MsgMintVestedRepresentation, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const MsgMintLockedRepresentation: MessageFns<MsgMintLockedRepresentation> = {
+  encode(message: MsgMintLockedRepresentation, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.sender !== "") {
       writer.uint32(10).string(message.sender);
     }
@@ -108,10 +108,10 @@ export const MsgMintVestedRepresentation: MessageFns<MsgMintVestedRepresentation
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgMintVestedRepresentation {
+  decode(input: BinaryReader | Uint8Array, length?: number): MsgMintLockedRepresentation {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgMintVestedRepresentation();
+    const message = createBaseMsgMintLockedRepresentation();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -148,7 +148,7 @@ export const MsgMintVestedRepresentation: MessageFns<MsgMintVestedRepresentation
     return message;
   },
 
-  fromJSON(object: any): MsgMintVestedRepresentation {
+  fromJSON(object: any): MsgMintLockedRepresentation {
     return {
       sender: isSet(object.sender) ? gt.String(object.sender) : "",
       receiver: isSet(object.receiver) ? gt.String(object.receiver) : "",
@@ -156,7 +156,7 @@ export const MsgMintVestedRepresentation: MessageFns<MsgMintVestedRepresentation
     };
   },
 
-  toJSON(message: MsgMintVestedRepresentation): unknown {
+  toJSON(message: MsgMintLockedRepresentation): unknown {
     const obj: any = {};
     if (message.sender !== "") {
       obj.sender = message.sender;
@@ -170,11 +170,11 @@ export const MsgMintVestedRepresentation: MessageFns<MsgMintVestedRepresentation
     return obj;
   },
 
-  create(base?: DeepPartial<MsgMintVestedRepresentation>): MsgMintVestedRepresentation {
-    return MsgMintVestedRepresentation.fromPartial(base ?? {});
+  create(base?: DeepPartial<MsgMintLockedRepresentation>): MsgMintLockedRepresentation {
+    return MsgMintLockedRepresentation.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<MsgMintVestedRepresentation>): MsgMintVestedRepresentation {
-    const message = createBaseMsgMintVestedRepresentation();
+  fromPartial(object: DeepPartial<MsgMintLockedRepresentation>): MsgMintLockedRepresentation {
+    const message = createBaseMsgMintLockedRepresentation();
     message.sender = object.sender ?? "";
     message.receiver = object.receiver ?? "";
     message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
@@ -182,19 +182,19 @@ export const MsgMintVestedRepresentation: MessageFns<MsgMintVestedRepresentation
   },
 };
 
-function createBaseMsgMintVestedRepresentationResponse(): MsgMintVestedRepresentationResponse {
+function createBaseMsgMintLockedRepresentationResponse(): MsgMintLockedRepresentationResponse {
   return {};
 }
 
-export const MsgMintVestedRepresentationResponse: MessageFns<MsgMintVestedRepresentationResponse> = {
-  encode(_: MsgMintVestedRepresentationResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const MsgMintLockedRepresentationResponse: MessageFns<MsgMintLockedRepresentationResponse> = {
+  encode(_: MsgMintLockedRepresentationResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgMintVestedRepresentationResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): MsgMintLockedRepresentationResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgMintVestedRepresentationResponse();
+    const message = createBaseMsgMintLockedRepresentationResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -207,30 +207,30 @@ export const MsgMintVestedRepresentationResponse: MessageFns<MsgMintVestedRepres
     return message;
   },
 
-  fromJSON(_: any): MsgMintVestedRepresentationResponse {
+  fromJSON(_: any): MsgMintLockedRepresentationResponse {
     return {};
   },
 
-  toJSON(_: MsgMintVestedRepresentationResponse): unknown {
+  toJSON(_: MsgMintLockedRepresentationResponse): unknown {
     const obj: any = {};
     return obj;
   },
 
-  create(base?: DeepPartial<MsgMintVestedRepresentationResponse>): MsgMintVestedRepresentationResponse {
-    return MsgMintVestedRepresentationResponse.fromPartial(base ?? {});
+  create(base?: DeepPartial<MsgMintLockedRepresentationResponse>): MsgMintLockedRepresentationResponse {
+    return MsgMintLockedRepresentationResponse.fromPartial(base ?? {});
   },
-  fromPartial(_: DeepPartial<MsgMintVestedRepresentationResponse>): MsgMintVestedRepresentationResponse {
-    const message = createBaseMsgMintVestedRepresentationResponse();
+  fromPartial(_: DeepPartial<MsgMintLockedRepresentationResponse>): MsgMintLockedRepresentationResponse {
+    const message = createBaseMsgMintLockedRepresentationResponse();
     return message;
   },
 };
 
-function createBaseMsgBurnVestedRepresentation(): MsgBurnVestedRepresentation {
+function createBaseMsgBurnLockedRepresentation(): MsgBurnLockedRepresentation {
   return { sender: "", user: "", amount: [] };
 }
 
-export const MsgBurnVestedRepresentation: MessageFns<MsgBurnVestedRepresentation> = {
-  encode(message: MsgBurnVestedRepresentation, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const MsgBurnLockedRepresentation: MessageFns<MsgBurnLockedRepresentation> = {
+  encode(message: MsgBurnLockedRepresentation, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.sender !== "") {
       writer.uint32(10).string(message.sender);
     }
@@ -243,10 +243,10 @@ export const MsgBurnVestedRepresentation: MessageFns<MsgBurnVestedRepresentation
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgBurnVestedRepresentation {
+  decode(input: BinaryReader | Uint8Array, length?: number): MsgBurnLockedRepresentation {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgBurnVestedRepresentation();
+    const message = createBaseMsgBurnLockedRepresentation();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -283,7 +283,7 @@ export const MsgBurnVestedRepresentation: MessageFns<MsgBurnVestedRepresentation
     return message;
   },
 
-  fromJSON(object: any): MsgBurnVestedRepresentation {
+  fromJSON(object: any): MsgBurnLockedRepresentation {
     return {
       sender: isSet(object.sender) ? gt.String(object.sender) : "",
       user: isSet(object.user) ? gt.String(object.user) : "",
@@ -291,7 +291,7 @@ export const MsgBurnVestedRepresentation: MessageFns<MsgBurnVestedRepresentation
     };
   },
 
-  toJSON(message: MsgBurnVestedRepresentation): unknown {
+  toJSON(message: MsgBurnLockedRepresentation): unknown {
     const obj: any = {};
     if (message.sender !== "") {
       obj.sender = message.sender;
@@ -305,11 +305,11 @@ export const MsgBurnVestedRepresentation: MessageFns<MsgBurnVestedRepresentation
     return obj;
   },
 
-  create(base?: DeepPartial<MsgBurnVestedRepresentation>): MsgBurnVestedRepresentation {
-    return MsgBurnVestedRepresentation.fromPartial(base ?? {});
+  create(base?: DeepPartial<MsgBurnLockedRepresentation>): MsgBurnLockedRepresentation {
+    return MsgBurnLockedRepresentation.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<MsgBurnVestedRepresentation>): MsgBurnVestedRepresentation {
-    const message = createBaseMsgBurnVestedRepresentation();
+  fromPartial(object: DeepPartial<MsgBurnLockedRepresentation>): MsgBurnLockedRepresentation {
+    const message = createBaseMsgBurnLockedRepresentation();
     message.sender = object.sender ?? "";
     message.user = object.user ?? "";
     message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
@@ -317,19 +317,19 @@ export const MsgBurnVestedRepresentation: MessageFns<MsgBurnVestedRepresentation
   },
 };
 
-function createBaseMsgBurnVestedRepresentationResponse(): MsgBurnVestedRepresentationResponse {
+function createBaseMsgBurnLockedRepresentationResponse(): MsgBurnLockedRepresentationResponse {
   return {};
 }
 
-export const MsgBurnVestedRepresentationResponse: MessageFns<MsgBurnVestedRepresentationResponse> = {
-  encode(_: MsgBurnVestedRepresentationResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const MsgBurnLockedRepresentationResponse: MessageFns<MsgBurnLockedRepresentationResponse> = {
+  encode(_: MsgBurnLockedRepresentationResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): MsgBurnVestedRepresentationResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): MsgBurnLockedRepresentationResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgBurnVestedRepresentationResponse();
+    const message = createBaseMsgBurnLockedRepresentationResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -342,20 +342,20 @@ export const MsgBurnVestedRepresentationResponse: MessageFns<MsgBurnVestedRepres
     return message;
   },
 
-  fromJSON(_: any): MsgBurnVestedRepresentationResponse {
+  fromJSON(_: any): MsgBurnLockedRepresentationResponse {
     return {};
   },
 
-  toJSON(_: MsgBurnVestedRepresentationResponse): unknown {
+  toJSON(_: MsgBurnLockedRepresentationResponse): unknown {
     const obj: any = {};
     return obj;
   },
 
-  create(base?: DeepPartial<MsgBurnVestedRepresentationResponse>): MsgBurnVestedRepresentationResponse {
-    return MsgBurnVestedRepresentationResponse.fromPartial(base ?? {});
+  create(base?: DeepPartial<MsgBurnLockedRepresentationResponse>): MsgBurnLockedRepresentationResponse {
+    return MsgBurnLockedRepresentationResponse.fromPartial(base ?? {});
   },
-  fromPartial(_: DeepPartial<MsgBurnVestedRepresentationResponse>): MsgBurnVestedRepresentationResponse {
-    const message = createBaseMsgBurnVestedRepresentationResponse();
+  fromPartial(_: DeepPartial<MsgBurnLockedRepresentationResponse>): MsgBurnLockedRepresentationResponse {
+    const message = createBaseMsgBurnLockedRepresentationResponse();
     return message;
   },
 };
@@ -603,15 +603,15 @@ export const MsgUpdateParamsResponse: MessageFns<MsgUpdateParamsResponse> = {
 /** Msg defines the services module's gRPC message service. */
 export interface Msg {
   /**
-   * MintVestedRepresentation defines the operation to mint a user's staked
-   * vested tokens representation that can be used in the liquid vesting module.
+   * MintLockedRepresentation defines the operation to mint a user's staked
+   * locked tokens representation that can be used in the liquid vesting module.
    */
-  MintVestedRepresentation(request: MsgMintVestedRepresentation): Promise<MsgMintVestedRepresentationResponse>;
+  MintLockedRepresentation(request: MsgMintLockedRepresentation): Promise<MsgMintLockedRepresentationResponse>;
   /**
-   * BurnVestedRepresentation defines the operation to burn a user's staked
-   * vested tokens representation.
+   * BurnLockedRepresentation defines the operation to burn a user's staked
+   * locked tokens representation.
    */
-  BurnVestedRepresentation(request: MsgBurnVestedRepresentation): Promise<MsgBurnVestedRepresentationResponse>;
+  BurnLockedRepresentation(request: MsgBurnLockedRepresentation): Promise<MsgBurnLockedRepresentationResponse>;
   /**
    * WithdrawInsuranceFund defines the operation to withdraw an amount
    * of tokens from the user's insurance fund.
@@ -636,21 +636,21 @@ export class MsgClientImpl implements Msg {
   constructor(rpc: Rpc, opts?: { service?: string }) {
     this.service = opts?.service || MsgServiceName;
     this.rpc = rpc;
-    this.MintVestedRepresentation = this.MintVestedRepresentation.bind(this);
-    this.BurnVestedRepresentation = this.BurnVestedRepresentation.bind(this);
+    this.MintLockedRepresentation = this.MintLockedRepresentation.bind(this);
+    this.BurnLockedRepresentation = this.BurnLockedRepresentation.bind(this);
     this.WithdrawInsuranceFund = this.WithdrawInsuranceFund.bind(this);
     this.UpdateParams = this.UpdateParams.bind(this);
   }
-  MintVestedRepresentation(request: MsgMintVestedRepresentation): Promise<MsgMintVestedRepresentationResponse> {
-    const data = MsgMintVestedRepresentation.encode(request).finish();
-    const promise = this.rpc.request(this.service, "MintVestedRepresentation", data);
-    return promise.then((data) => MsgMintVestedRepresentationResponse.decode(new BinaryReader(data)));
+  MintLockedRepresentation(request: MsgMintLockedRepresentation): Promise<MsgMintLockedRepresentationResponse> {
+    const data = MsgMintLockedRepresentation.encode(request).finish();
+    const promise = this.rpc.request(this.service, "MintLockedRepresentation", data);
+    return promise.then((data) => MsgMintLockedRepresentationResponse.decode(new BinaryReader(data)));
   }
 
-  BurnVestedRepresentation(request: MsgBurnVestedRepresentation): Promise<MsgBurnVestedRepresentationResponse> {
-    const data = MsgBurnVestedRepresentation.encode(request).finish();
-    const promise = this.rpc.request(this.service, "BurnVestedRepresentation", data);
-    return promise.then((data) => MsgBurnVestedRepresentationResponse.decode(new BinaryReader(data)));
+  BurnLockedRepresentation(request: MsgBurnLockedRepresentation): Promise<MsgBurnLockedRepresentationResponse> {
+    const data = MsgBurnLockedRepresentation.encode(request).finish();
+    const promise = this.rpc.request(this.service, "BurnLockedRepresentation", data);
+    return promise.then((data) => MsgBurnLockedRepresentationResponse.decode(new BinaryReader(data)));
   }
 
   WithdrawInsuranceFund(request: MsgWithdrawInsuranceFund): Promise<MsgWithdrawInsuranceFundResponse> {

@@ -15,19 +15,11 @@ export const protobufPackage = "milkyway.liquidvesting.v1";
 export interface UserInsuranceFund {
   /** Amount of coins deposited into the user's insurance fund. */
   balance: Coin[];
-  /**
-   * Amount in the user's insurance that is being used to secure the
-   * restaked toknes. For example an user has 10 TIA in their insurance fund,
-   * the insurance percentage is 1% so they can restake 1000 TIA.
-   * The user restakes only 100 TIA, in this case the balance is 10 TIA and used
-   * is 1 TIA.
-   */
-  used: Coin[];
 }
 
 /**
  * BurnCoins is a struct that contains the information about the coins to burn
- * once the unbonding period of the vested representation tokens ends.
+ * once the unbonding period of the locked representation tokens ends.
  */
 export interface BurnCoins {
   /** Address of who has delegated the coins. */
@@ -45,25 +37,25 @@ export interface BurnCoinsList {
   data: BurnCoins[];
 }
 
-/** UserInsuranceFundState represents a user's insurance fund. */
-export interface UserInsuranceFundState {
+/**
+ * UserInsuranceFundEntry represents an entry containing the data of a user
+ * insurance fund.
+ */
+export interface UserInsuranceFundEntry {
   /** Address of who owns the insurance fund. */
   userAddress: string;
-  /** InsuranceFund represents the user's insurance fund. */
-  insuranceFund: UserInsuranceFund | undefined;
+  /** Amount of coins deposited into the user's insurance fund. */
+  balance: Coin[];
 }
 
 function createBaseUserInsuranceFund(): UserInsuranceFund {
-  return { balance: [], used: [] };
+  return { balance: [] };
 }
 
 export const UserInsuranceFund: MessageFns<UserInsuranceFund> = {
   encode(message: UserInsuranceFund, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.balance) {
       Coin.encode(v!, writer.uint32(10).fork()).join();
-    }
-    for (const v of message.used) {
-      Coin.encode(v!, writer.uint32(18).fork()).join();
     }
     return writer;
   },
@@ -83,14 +75,6 @@ export const UserInsuranceFund: MessageFns<UserInsuranceFund> = {
           message.balance.push(Coin.decode(reader, reader.uint32()));
           continue;
         }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.used.push(Coin.decode(reader, reader.uint32()));
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -101,19 +85,13 @@ export const UserInsuranceFund: MessageFns<UserInsuranceFund> = {
   },
 
   fromJSON(object: any): UserInsuranceFund {
-    return {
-      balance: gt.Array.isArray(object?.balance) ? object.balance.map((e: any) => Coin.fromJSON(e)) : [],
-      used: gt.Array.isArray(object?.used) ? object.used.map((e: any) => Coin.fromJSON(e)) : [],
-    };
+    return { balance: gt.Array.isArray(object?.balance) ? object.balance.map((e: any) => Coin.fromJSON(e)) : [] };
   },
 
   toJSON(message: UserInsuranceFund): unknown {
     const obj: any = {};
     if (message.balance?.length) {
       obj.balance = message.balance.map((e) => Coin.toJSON(e));
-    }
-    if (message.used?.length) {
-      obj.used = message.used.map((e) => Coin.toJSON(e));
     }
     return obj;
   },
@@ -124,7 +102,6 @@ export const UserInsuranceFund: MessageFns<UserInsuranceFund> = {
   fromPartial(object: DeepPartial<UserInsuranceFund>): UserInsuranceFund {
     const message = createBaseUserInsuranceFund();
     message.balance = object.balance?.map((e) => Coin.fromPartial(e)) || [];
-    message.used = object.used?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };
@@ -279,25 +256,25 @@ export const BurnCoinsList: MessageFns<BurnCoinsList> = {
   },
 };
 
-function createBaseUserInsuranceFundState(): UserInsuranceFundState {
-  return { userAddress: "", insuranceFund: undefined };
+function createBaseUserInsuranceFundEntry(): UserInsuranceFundEntry {
+  return { userAddress: "", balance: [] };
 }
 
-export const UserInsuranceFundState: MessageFns<UserInsuranceFundState> = {
-  encode(message: UserInsuranceFundState, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const UserInsuranceFundEntry: MessageFns<UserInsuranceFundEntry> = {
+  encode(message: UserInsuranceFundEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.userAddress !== "") {
       writer.uint32(10).string(message.userAddress);
     }
-    if (message.insuranceFund !== undefined) {
-      UserInsuranceFund.encode(message.insuranceFund, writer.uint32(18).fork()).join();
+    for (const v of message.balance) {
+      Coin.encode(v!, writer.uint32(18).fork()).join();
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): UserInsuranceFundState {
+  decode(input: BinaryReader | Uint8Array, length?: number): UserInsuranceFundEntry {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUserInsuranceFundState();
+    const message = createBaseUserInsuranceFundEntry();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -314,7 +291,7 @@ export const UserInsuranceFundState: MessageFns<UserInsuranceFundState> = {
             break;
           }
 
-          message.insuranceFund = UserInsuranceFund.decode(reader, reader.uint32());
+          message.balance.push(Coin.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -326,33 +303,31 @@ export const UserInsuranceFundState: MessageFns<UserInsuranceFundState> = {
     return message;
   },
 
-  fromJSON(object: any): UserInsuranceFundState {
+  fromJSON(object: any): UserInsuranceFundEntry {
     return {
       userAddress: isSet(object.userAddress) ? gt.String(object.userAddress) : "",
-      insuranceFund: isSet(object.insuranceFund) ? UserInsuranceFund.fromJSON(object.insuranceFund) : undefined,
+      balance: gt.Array.isArray(object?.balance) ? object.balance.map((e: any) => Coin.fromJSON(e)) : [],
     };
   },
 
-  toJSON(message: UserInsuranceFundState): unknown {
+  toJSON(message: UserInsuranceFundEntry): unknown {
     const obj: any = {};
     if (message.userAddress !== "") {
       obj.userAddress = message.userAddress;
     }
-    if (message.insuranceFund !== undefined) {
-      obj.insuranceFund = UserInsuranceFund.toJSON(message.insuranceFund);
+    if (message.balance?.length) {
+      obj.balance = message.balance.map((e) => Coin.toJSON(e));
     }
     return obj;
   },
 
-  create(base?: DeepPartial<UserInsuranceFundState>): UserInsuranceFundState {
-    return UserInsuranceFundState.fromPartial(base ?? {});
+  create(base?: DeepPartial<UserInsuranceFundEntry>): UserInsuranceFundEntry {
+    return UserInsuranceFundEntry.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<UserInsuranceFundState>): UserInsuranceFundState {
-    const message = createBaseUserInsuranceFundState();
+  fromPartial(object: DeepPartial<UserInsuranceFundEntry>): UserInsuranceFundEntry {
+    const message = createBaseUserInsuranceFundEntry();
     message.userAddress = object.userAddress ?? "";
-    message.insuranceFund = (object.insuranceFund !== undefined && object.insuranceFund !== null)
-      ? UserInsuranceFund.fromPartial(object.insuranceFund)
-      : undefined;
+    message.balance = object.balance?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };

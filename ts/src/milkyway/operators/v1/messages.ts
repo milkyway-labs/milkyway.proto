@@ -6,6 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { Coin } from "../../../cosmos/base/v1beta1/coin";
 import { OperatorParams } from "./models";
 import { Params } from "./params";
 
@@ -26,6 +27,14 @@ export interface MsgRegisterOperator {
   website: string;
   /** PictureURL is the URL of operator picture (optional) */
   pictureUrl: string;
+  /**
+   * FeeAmount represents the fees that are going to be paid to create the
+   * operator. These should always be greater or equals of any of the coins
+   * specified inside the OperatorRegistrationFee field of the modules params.
+   * If no fees are specified inside the module parameters, this field can be
+   * omitted.
+   */
+  feeAmount: Coin[];
 }
 
 /**
@@ -180,7 +189,7 @@ export interface MsgUpdateParamsResponse {
 }
 
 function createBaseMsgRegisterOperator(): MsgRegisterOperator {
-  return { sender: "", moniker: "", website: "", pictureUrl: "" };
+  return { sender: "", moniker: "", website: "", pictureUrl: "", feeAmount: [] };
 }
 
 export const MsgRegisterOperator: MessageFns<MsgRegisterOperator> = {
@@ -196,6 +205,9 @@ export const MsgRegisterOperator: MessageFns<MsgRegisterOperator> = {
     }
     if (message.pictureUrl !== "") {
       writer.uint32(34).string(message.pictureUrl);
+    }
+    for (const v of message.feeAmount) {
+      Coin.encode(v!, writer.uint32(42).fork()).join();
     }
     return writer;
   },
@@ -239,6 +251,14 @@ export const MsgRegisterOperator: MessageFns<MsgRegisterOperator> = {
           message.pictureUrl = reader.string();
           continue;
         }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.feeAmount.push(Coin.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -254,6 +274,7 @@ export const MsgRegisterOperator: MessageFns<MsgRegisterOperator> = {
       moniker: isSet(object.moniker) ? gt.String(object.moniker) : "",
       website: isSet(object.website) ? gt.String(object.website) : "",
       pictureUrl: isSet(object.pictureUrl) ? gt.String(object.pictureUrl) : "",
+      feeAmount: gt.Array.isArray(object?.feeAmount) ? object.feeAmount.map((e: any) => Coin.fromJSON(e)) : [],
     };
   },
 
@@ -271,6 +292,9 @@ export const MsgRegisterOperator: MessageFns<MsgRegisterOperator> = {
     if (message.pictureUrl !== "") {
       obj.pictureUrl = message.pictureUrl;
     }
+    if (message.feeAmount?.length) {
+      obj.feeAmount = message.feeAmount.map((e) => Coin.toJSON(e));
+    }
     return obj;
   },
 
@@ -283,6 +307,7 @@ export const MsgRegisterOperator: MessageFns<MsgRegisterOperator> = {
     message.moniker = object.moniker ?? "";
     message.website = object.website ?? "";
     message.pictureUrl = object.pictureUrl ?? "";
+    message.feeAmount = object.feeAmount?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };
