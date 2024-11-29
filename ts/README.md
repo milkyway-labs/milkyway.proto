@@ -14,16 +14,6 @@ Install the required dependencies:
 yarn install
 ```
 
-### Login to Buf
-
-Create an account on [buf.build](https://buf.build) and log in using the following command:  
-
-```bash
-yarn buf registry login
-```
-
-> **Note:** Logging in is necessary to avoid being rate-limited by buf.build during the generation process.
-
 ### Generate Definitions
 
 Run the following command to generate the Protobuf definitions:
@@ -47,7 +37,7 @@ Update the `version` field in the `package.json` file to reflect the new release
 Prepare the files for publishing by running:
 
 ```bash
-yarn run prepare-publish
+yarn run prepare
 ```
 
 ### Publish

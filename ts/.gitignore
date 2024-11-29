@@ -1,14 +1,9 @@
 node_modules
 build
 
-# Ignore proto folders
-amino/
-cosmos/
-cosmos_proto/
-gogoproto/
-google/
-milkyway/
-stride/
-tendermint/
 # Don't ignore the folders from the src folder
 !src/**
+
+# Used by the build script
+scripts/proto
+scripts/repos
