@@ -8,7 +8,7 @@ export const reposDir = join(__dirname, "repos");
 export const config = [
   {
     repo: "https://github.com/milkyway-labs/milkyway",
-    rev: "riccardom/fix-buf",
+    rev: "v2.0.2",
   },
   {
     repo: "https://github.com/cosmos/cosmos-sdk",
