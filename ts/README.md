@@ -2,48 +2,31 @@
 
 JavaScript/TypeScript MilkyWay Protobuf Definitions
 
-## Generate
+## How to generate the definitions
 
-To generate the Protobuf definitions, first ensure that the `proto` folder contains the correct definitions.
-
-### Install Dependencies
-
-Install the required dependencies:
+In order to generate the Protobuf definitions for MilkyWay, you will need to have the following dependencies installed.
+You can do that by running the following command:
 
 ```bash
 yarn install
 ```
 
-### Generate Definitions
+Then, you will have to select the version of the MilkyWay Protobuf definitions you want to generate.
+You can do this by editing the `rev` field inside the [`clone_repo.ts`](scripts/clone_repos.ts) file.
 
-Run the following command to generate the Protobuf definitions:
+Finally, once you have selected the version you want to generate, you can run the following command:
 
 ```bash
 yarn run build
 ```
 
----
+## Deploy on NPM
 
-## Deploy on npm
-
-After generating the definitions, you may want to publish them to npm.
-
-### Update Version
-
-Update the `version` field in the `package.json` file to reflect the new release.
-
-### Prepare for Publishing
-
-Prepare the files for publishing by running:
-
-```bash
-yarn run prepare
-```
-
-### Publish
-
-Once prepared, publish the package with:
+After generating the definitions, you may want to publish them to [NPM](https://www.npmjs.com/).
+To do this, you can run:
 
 ```bash
 yarn publish
 ```
+
+
